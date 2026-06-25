@@ -1,9 +1,9 @@
 import apiClient from './client'
-import type { Post, CreatePostRequest } from '../types/post'
+import type { Post, CreatePostRequest, PagedPosts } from '../types/post'
 
 // 投稿一覧を取得
-export const getPosts = () => {
-  return apiClient.get<Post[]>('/posts')
+export const getPosts = (page: number, pageSize: number) => {
+  return apiClient.get<PagedPosts>('/posts', { params: { page, pageSize } })
 }
 
 // 投稿1件を取得

@@ -20,14 +20,19 @@ namespace BoardApi.Controllers
             _context = context;
         }
 
-        // GET /api/posts
+        // GET /api/posts?page=1&pageSize=30
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
+        public async Task<IActionResult> GetPosts(int page = 1, int pageSize = 30)
         {
-            return await _context.Posts
-                .Where(p => !p.DelFlag)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
+            if (pageSize != 10 && pageSize != 30 && pageSize != 50 && pageSize != 100)
+                pageSize = 30;
+            if (page < 1) page = 1;
+
+            var query = _context.Posts.Where(p => !p.DelFlag).OrderByDescending(p => p.CreatedAt);
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return Ok(new { items, totalCount, page, pageSize });
         }
 
         // GET /api/posts/{id}

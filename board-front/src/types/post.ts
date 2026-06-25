@@ -13,3 +13,11 @@ export interface CreatePostRequest {
   title: string
   content: string
 }
+
+// ページング付きレスポンスの型
+export interface PagedPosts {
+  items: Post[]
+  totalCount: number
+  page: number
+  pageSize: number
+}
