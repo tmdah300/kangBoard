@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPost, likePost, deletePost } from '../api/posts'
 import { getComments, createComment, deleteComment } from '../api/comments'
@@ -7,7 +7,7 @@ import { useAuth } from '../composables/useAuth'
 import type { Post } from '../types/post'
 import type { Comment } from '../types/comment'
 
-const { isLoggedIn } = useAuth()
+const { isLoggedIn, userId } = useAuth()
 
 const route = useRoute()
 const router = useRouter()
@@ -21,6 +21,8 @@ const liking = ref(false)
 const error = ref('')
 
 const postId = Number(route.params.id)
+
+const isOwnPost = computed(() => post.value?.userId != null && post.value.userId === userId.value)
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleString('ja-JP')
@@ -106,7 +108,7 @@ const submitComment = async () => {
       <article class="post-card">
         <div class="post-header">
           <h1 class="post-title">{{ post.title }}</h1>
-          <button v-if="isLoggedIn" class="btn-delete-post" @click="handleDeletePost" title="投稿を削除">
+          <button v-if="isOwnPost" class="btn-delete-post" @click="handleDeletePost" title="投稿を削除">
             🗑 削除
           </button>
         </div>

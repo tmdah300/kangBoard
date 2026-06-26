@@ -1,11 +1,11 @@
-// APIから返ってくるPostの型（C#のPostモデルと対応）
 export interface Post {
   id: number
   title: string
   content: string
-  createdAt: string  // C#のDateTimeはJSON化するとstring
+  createdAt: string
   viewCount: number
   likeCount: number
+  userId: number | null
 }
 
 // 投稿作成時に送信するデータの型

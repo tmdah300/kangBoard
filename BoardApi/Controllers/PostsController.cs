@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BoardApi.Data;
+using BoardApi.DTOs;
 using BoardApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,8 +53,19 @@ namespace BoardApi.Controllers
         // POST /api/posts
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Post>> CreatePost(Post post)
+        public async Task<ActionResult<Post>> CreatePost(CreatePostRequest dto)
         {
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+                return Unauthorized();
+
+            var post = new Post
+            {
+                Title = dto.Title,
+                Content = dto.Content,
+                UserId = userId,
+            };
+
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
@@ -65,6 +78,13 @@ namespace BoardApi.Controllers
         {
             var post = await _context.Posts.FindAsync(id);
             if (post == null || post.DelFlag) return NotFound();
+
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+                return Unauthorized();
+
+            if (post.UserId != null && post.UserId != userId)
+                return Forbid();
 
             post.DelFlag = true;
             await _context.SaveChangesAsync();

@@ -23,6 +23,9 @@ namespace BoardApi.Models
 
         public bool DelFlag { get; set; } = false;
 
+        public int? UserId { get; set; }
+        public User User { get; set; }
+
         public ICollection<Comment> Comments { get; set; }
     }
 }

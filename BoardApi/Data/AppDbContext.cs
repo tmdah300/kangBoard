@@ -14,12 +14,17 @@ namespace BoardApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // PostとCommentの1対多リレーションを明示的に設定
             modelBuilder.Entity<Comment>()
-                .HasOne(c => c.Post)           // CommentはPostを1つ持つ
-                .WithMany(p => p.Comments)      // PostはCommentを複数持つ
-                .HasForeignKey(c => c.PostId)   // 外部キーはPostId
-                .OnDelete(DeleteBehavior.Cascade); // Post削除時にCommentも削除
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Post>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

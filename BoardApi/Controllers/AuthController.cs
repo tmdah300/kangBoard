@@ -46,6 +46,7 @@ namespace BoardApi.Controllers
             {
                 Token = GenerateToken(user),
                 Username = user.Username,
+                UserId = user.Id,
             });
         }
 
@@ -62,6 +63,7 @@ namespace BoardApi.Controllers
             {
                 Token = GenerateToken(user),
                 Username = user.Username,
+                UserId = user.Id,
             });
         }
 
